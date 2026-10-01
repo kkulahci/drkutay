@@ -3,6 +3,7 @@ from core.database import db, new_id, now_iso, gen_patient_number
 from core.config import STAFF_ROLES
 from core.deps import get_current_user, require_roles, clinic_filter
 from core.audit import log_action
+from core.security import hash_password
 from models import PatientInput
 
 router = APIRouter(prefix="/patients")
@@ -92,6 +93,32 @@ async def patient_timeline(patient_id: str, user: dict = Depends(require_roles(*
             })
     events.sort(key=lambda e: e.get("date") or "", reverse=True)
     return events
+
+
+@router.post("/{patient_id}/portal-access")
+async def portal_access(patient_id: str, data: dict, request: Request,
+                        user: dict = Depends(require_roles("SUPER_ADMIN", "CLINIC_ADMIN", "DOCTOR", "NURSE", "SECRETARY"))):
+    q = {"id": patient_id, "deleted_at": None}
+    q.update(clinic_filter(user))
+    p = await db.patients.find_one(q, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Hasta bulunamadı")
+    email = (data.get("email") or "").lower().strip()
+    password = data.get("password") or ""
+    if not email or len(password) < 4:
+        raise HTTPException(status_code=400, detail="Geçerli e-posta ve en az 4 karakterlik şifre gerekli")
+    if await db.users.find_one({"email": email}):
+        raise HTTPException(status_code=400, detail="Bu e-posta zaten kayıtlı")
+    uid = new_id()
+    await db.users.insert_one({
+        "id": uid, "email": email, "password_hash": hash_password(password),
+        "name": f"{p['first_name']} {p['last_name']}", "role": "PATIENT",
+        "clinic_id": p.get("clinic_id"), "patient_id": patient_id,
+        "auth_provider": "password", "active": True, "created_at": now_iso(), "deleted_at": None,
+    })
+    await db.patients.update_one({"id": patient_id}, {"$set": {"portal_email": email, "portal_user_id": uid}})
+    await log_action(user, "CREATE", "portal_access", uid, patient_id=patient_id, new_value={"email": email}, request=request)
+    return {"status": "ok", "email": email}
 
 
 @router.post("")

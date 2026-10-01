@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const BASE = `${process.env.REACT_APP_BACKEND_URL}/api`;
+export const BACKEND = process.env.REACT_APP_BACKEND_URL;
+export const fileUrl = (fileId) => `${BASE}/files/${fileId}/download`;
 
 const client = axios.create({ baseURL: BASE, withCredentials: true });
 
@@ -18,6 +20,7 @@ export const api = {
   post: (url, data) => client.post(url, data).then((r) => r.data),
   put: (url, data) => client.put(url, data).then((r) => r.data),
   del: (url) => client.delete(url).then((r) => r.data),
+  upload: (url, formData) => client.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } }).then((r) => r.data),
 };
 
 export default client;

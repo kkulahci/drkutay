@@ -5,8 +5,9 @@ import logging
 from core.config import settings, CLINICAL_WRITE, STAFF_ROLES, MEDICAL_WRITE
 from core.database import client
 from core.crud import make_crud_router
-from routers import auth, clinics, users, patients, dashboard, reference, audit, public
+from routers import auth, clinics, users, patients, dashboard, reference, audit, public, files, portal, ai
 from seed import run_seed
+from core.storage import init_storage
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("hbot")
@@ -29,7 +30,9 @@ api.include_router(patients.router)
 api.include_router(dashboard.router)
 api.include_router(reference.router)
 api.include_router(audit.audit_router)
-api.include_router(audit.ai_router)
+api.include_router(ai.router)
+api.include_router(files.router)
+api.include_router(portal.router)
 
 # Generic clinic-scoped, soft-delete, audited CRUD modules.
 # (collection, prefix, write_roles, record_type, patient_required, wound_code)
@@ -81,6 +84,11 @@ async def startup():
         logger.info("Seed complete")
     except Exception as e:
         logger.error(f"Seed error: {e}")
+    try:
+        init_storage()
+        logger.info("Storage initialized")
+    except Exception as e:
+        logger.error(f"Storage init failed: {e}")
 
 
 @app.on_event("shutdown")

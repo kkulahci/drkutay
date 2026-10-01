@@ -25,7 +25,7 @@ async def list_audit(patient_id: str = None, action: str = None, record_type: st
 
 
 # AI service layer (V1: architecture only, outputs always require clinician verification)
-ai_router = APIRouter(prefix="/ai")
+ai_router = APIRouter(prefix="/ai-legacy")
 
 
 @ai_router.get("/capabilities")

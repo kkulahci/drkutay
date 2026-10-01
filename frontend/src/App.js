@@ -16,8 +16,19 @@ import Users from "@/pages/Users";
 import ClinicSettings from "@/pages/ClinicSettings";
 import AuditLog from "@/pages/AuditLog";
 import AnamnesisWizard from "@/pages/AnamnesisWizard";
+import PatientPortal from "@/pages/PatientPortal";
 
 function Protected({ children }) {
+  const { user, ready } = useAuth();
+  if (!ready || user === null) {
+    return <div className="min-h-screen flex items-center justify-center text-slate-500">Yükleniyor...</div>;
+  }
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role === "PATIENT") return <Navigate to="/portal" replace />;
+  return children;
+}
+
+function PatientProtected({ children }) {
   const { user, ready } = useAuth();
   if (!ready || user === null) {
     return <div className="min-h-screen flex items-center justify-center text-slate-500">Yükleniyor...</div>;
@@ -33,6 +44,7 @@ function AppRouter() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/anamnez/:patientId" element={<AnamnesisWizard />} />
+      <Route path="/portal" element={<PatientProtected><PatientPortal /></PatientProtected>} />
       <Route element={<Protected><Layout /></Protected>}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/patients" element={<Patients />} />

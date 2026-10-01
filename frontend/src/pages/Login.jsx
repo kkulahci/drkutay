@@ -21,8 +21,8 @@ export default function Login() {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      await login(email, password);
-      navigate("/");
+      const u = await login(email, password);
+      navigate(u.role === "PATIENT" ? "/portal" : "/");
     } catch (err) {
       setError(formatApiErrorDetail(err.response?.data?.detail) || err.message);
     } finally { setLoading(false); }

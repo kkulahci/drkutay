@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { api } from "@/lib/api";
+import { api, fileUrl } from "@/lib/api";
 import { fmtDay, EmptyState } from "@/components/common";
+import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,6 +90,7 @@ export default function WoundTab({ patientId, canWrite }) {
   const [newWound, setNewWound] = useState({ side: "Sağ", status: "Açık" });
   const [compareA, setCompareA] = useState(null);
   const [compareB, setCompareB] = useState(null);
+  const [photos, setPhotos] = useState([]);
 
   const loadWounds = useCallback(() => api.get("/wounds", { patient_id: patientId }).then((w) => { setWounds(w); if (w.length && !selected) setSelected(w[0]); }).catch(() => {}), [patientId, selected]);
   useEffect(() => { loadWounds(); }, [patientId]);
@@ -96,13 +98,19 @@ export default function WoundTab({ patientId, canWrite }) {
   const loadAssess = useCallback(() => {
     if (!selected) return;
     api.get("/wound-assessments", { wound_id: selected.id }).then((a) => {
-      const sorted = [...a].sort((x, y) => (x.date || "").localeCompare(y.date || ""));
-      setAssessments(sorted);
-      const withPhoto = sorted.filter((s) => s.photo_url);
-      if (withPhoto.length) { setCompareA(withPhoto[0]); setCompareB(withPhoto[withPhoto.length - 1]); }
+      setAssessments([...a].sort((x, y) => (x.date || "").localeCompare(y.date || "")));
     }).catch(() => {});
   }, [selected]);
-  useEffect(() => { loadAssess(); }, [loadAssess]);
+  const loadPhotos = useCallback(() => {
+    if (!selected) return;
+    api.get("/wound-photos", { wound_id: selected.id }).then((ps) => {
+      const sorted = [...ps].sort((x, y) => (x.date || "").localeCompare(y.date || ""));
+      setPhotos(sorted);
+      if (sorted.length) { setCompareA(sorted[0]); setCompareB(sorted[sorted.length - 1]); }
+      else { setCompareA(null); setCompareB(null); }
+    }).catch(() => {});
+  }, [selected]);
+  useEffect(() => { loadAssess(); loadPhotos(); }, [loadAssess, loadPhotos]);
 
   const saveWound = async () => {
     try { await api.post("/wounds", { ...newWound, patient_id: patientId, date: new Date().toISOString() }); toast.success("Yara eklendi"); setWoundOpen(false); setNewWound({ side: "Sağ", status: "Açık" }); loadWounds(); }
@@ -149,16 +157,26 @@ export default function WoundTab({ patientId, canWrite }) {
             </div>
 
             <div className="border border-slate-200 rounded-xl p-4 bg-white">
-              <h4 className="font-semibold text-sm mb-3">Fotoğraf Karşılaştırma</h4>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-semibold text-sm">Fotoğraf Karşılaştırma</h4>
+                {canWrite && <FileUpload patientId={patientId} kind="wound_photo" woundId={selected.id} label="Foto" testid="upload-wound-photo" onUploaded={loadPhotos} />}
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 {[compareA, compareB].map((c, i) => (
                   <div key={i} className="text-center">
-                    {c?.photo_url ? <img src={c.photo_url} alt="yara" className="w-full h-32 object-cover rounded-lg border border-slate-200" />
+                    {c?.file_id ? <img src={fileUrl(c.file_id)} alt="yara" className="w-full h-32 object-cover rounded-lg border border-slate-200" />
                       : <div className="w-full h-32 rounded-lg bg-slate-100 flex items-center justify-center text-xs text-slate-400">Fotoğraf yok</div>}
                     <div className="text-xs text-slate-500 mt-1">{c ? fmtDay(c.date) : "-"}</div>
                   </div>
                 ))}
               </div>
+              {photos.length > 2 && (
+                <div className="flex gap-2 mt-3 overflow-x-auto">
+                  {photos.map((ph) => (
+                    <img key={ph.id} src={fileUrl(ph.file_id)} alt="" onClick={() => setCompareB(ph)} className="w-12 h-12 object-cover rounded border border-slate-200 cursor-pointer hover:border-teal-500 shrink-0" />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
