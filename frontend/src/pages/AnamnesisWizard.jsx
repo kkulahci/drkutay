@@ -30,26 +30,23 @@ export default function AnamnesisWizard() {
   const [data, setData] = useState({ safety: {} });
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => { api.get(`/patients/${patientId}`).then(setPatient).catch(() => {}); }, [patientId]);
+  useEffect(() => {
+    api.get(`/public/patient/${patientId}`)
+      .then(setPatient)
+      .catch(() => toast.error("Hasta bilgisi yüklenemedi. Lütfen personele bildirin."));
+  }, [patientId]);
   const set = (k, v) => setData((p) => ({ ...p, [k]: v }));
   const setSafety = (k, v) => setData((p) => ({ ...p, safety: { ...p.safety, [k]: v } }));
   const hasRisk = Object.values(data.safety || {}).some(Boolean);
 
   const submit = async () => {
     try {
-      await api.post("/anamnesis", {
-        patient_id: patientId, source: "Hasta tarafından girildi", status: "patient_submitted",
+      await api.post(`/public/anamnesis/${patientId}`, {
         complaint: data.complaint, history: data.history, past_history: data.past,
         family_history: data.family, medications: data.meds, allergies: data.allergies,
         smoking_alcohol: data.habits, safety_answers: data.safety, safety_flags: hasRisk,
-        date: new Date().toISOString(),
+        phone: data.phone, date: new Date().toISOString(),
       });
-      if (hasRisk) {
-        await api.post("/hbot-safety-screenings", {
-          patient_id: patientId, answers: data.safety, has_risk: true,
-          outcome: "Hekim değerlendirmesi gerekli", source: "Hasta anamnez formu", date: new Date().toISOString(),
-        });
-      }
       setSubmitted(true);
     } catch { toast.error("Gönderilemedi. Lütfen personele bildirin."); }
   };

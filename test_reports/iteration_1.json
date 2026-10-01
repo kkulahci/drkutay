@@ -1,0 +1,32 @@
+{
+  "summary": "Full backend + smoke frontend test for HBOT Clinic MVP. 31/31 pytest cases pass: auth (all 5 roles via httpOnly cookies), /auth/me, bad-password 401, Google /session endpoint reachable, clinic isolation (DOCTOR sees only demo clinic, SUPER_ADMIN sees all), RBAC (SECRETARY blocked from diagnoses/encounters, allowed on patients/appointments; DOCTOR allowed on diagnoses), patient CRUD with HB-2026-xxxxxx number, timeline, global search, soft delete removes from list and returns 404, dashboard stats returns all 12 KPIs, wound create generates W- code, wound_assessment TIME tissue payload accepted, HBOT plan+session create, safety screening has_risk flag + outcome 'Hekim değerlendirmesi gerekli', lab/imaging/document/consent-with-signature CRUD, anamnesis create+approve (PUT), audit list works and PUT/DELETE/POST on /audit return 404/405 (append-only verified), reference icd + sut rules (versioned) work. Frontend smoke: doctor login lands on dashboard, 6 KPI cards render, patients page shows 5 demo rows, patient detail shows all 12 expected tabs (tab-timeline, anamnesis, encounters, vitals, physexam, safety, wounds, hbot, labs, imaging, documents, consents), timeline populated, no console errors. Anamnesis kiosk wizard at /anamnez/:id renders 'Adım 1 / 9' with correct progress but Step 1 body is blank — see frontend issue.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "AnamnesisWizard", "issue": "Step 1 (Kimlik ve İletişim) renders blank body. Patient fetched via api.get(`/patients/${id}`) which requires STAFF_ROLES. If opened by an unauthenticated patient (kiosk use case) the fetch is swallowed by catch(()=>{}) and the first-step inputs never render. Even for staff the empty catch hides errors silently.", "selector": "/anamnez/:patientId step index 0", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Kiosk wizard: expose a minimal public (or token-scoped) endpoint to fetch patient first_name/last_name/phone for the identity step, OR gate /anamnez behind auth and surface a login prompt. At minimum, remove the silent catch(()=>{}) and show a toast/error so blank-step state is diagnosable.",
+    "CORS: backend/.env has CORS_ORIGINS='*' but server.py uses settings.FRONTEND_URL + localhost explicitly, so the env value is unused. Either read it or drop it from .env to avoid confusion.",
+    "Config: core/config.py imports load_dotenv but uses os.environ[...] with no defaults — fine, but ADMIN_PASSWORD fallback 'admin123' in Settings is a code smell (never used in prod but misleading)."
+  ],
+  "critical_code_review_comments": [
+    "generic CRUD POST uses raw request.json() without Pydantic validation — any field can be inserted; acceptable for MVP but should be constrained for safety-screening/wound-assessment payloads later.",
+    "Audit log for SUPER_ADMIN uses clinic_filter which returns {} (sees all) — correct.",
+    "/api/anamnesis route is registered via STAFF_ROLES which means patients themselves cannot POST — if wizard is truly kiosk for patients, enforcement does not match the user story. Currently approvals etc. work because staff are posting from the kiosk device.",
+    "TIME tissue-sum-to-100 is only enforced in UI per request; backend accepts any sum. OK by spec.",
+    "server.py mounts app.add_middleware AFTER include_router. Starlette resolves this fine but conventional order is middleware first; low risk."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "100% (31/31)", "frontend": "95% (login/dashboard/patients/detail/tabs/timeline OK; wizard step1 blank)"},
+  "test_credentials": "Used /app/memory/test_credentials.md as-is; all 5 roles authenticate.",
+  "seed_data_creation": "Tests created TEST_ prefixed patients, diagnoses, wounds, hbot plan/session, lab, imaging, document, consent, anamnesis within the DOCTOR demo clinic. Not cleaned up (soft-delete only tested once).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend baseline is green. Only outstanding item is the kiosk wizard patient fetch (anonymous access vs staff auth). All data-testids present and stable. Pytest file at /app/backend/tests/backend_test.py uses httpOnly cookie session (requests.Session) — reuse the _login helper.",
+  "rca of the issue": "AnamnesisWizard calls GET /api/patients/{id} which is gated by require_roles(STAFF_ROLES). When wizard is used anonymously as a kiosk (/anamnez/:patientId route is not auth-guarded in the SPA), the request returns 401 and the swallow catch(()=>{}) leaves patient=null, so the identity-step JSX guard `{s.key==='identity' && patient && (...)}` renders nothing. Mitigation: add a lightweight public patient-summary endpoint restricted to id+first_name+last_name+phone, or require staff login before launching the kiosk."
+}

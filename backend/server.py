@@ -5,7 +5,7 @@ import logging
 from core.config import settings, CLINICAL_WRITE, STAFF_ROLES, MEDICAL_WRITE
 from core.database import client
 from core.crud import make_crud_router
-from routers import auth, clinics, users, patients, dashboard, reference, audit
+from routers import auth, clinics, users, patients, dashboard, reference, audit, public
 from seed import run_seed
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -22,6 +22,7 @@ async def root():
 
 # Core routers
 api.include_router(auth.router)
+api.include_router(public.router)
 api.include_router(clinics.router)
 api.include_router(users.router)
 api.include_router(patients.router)
