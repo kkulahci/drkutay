@@ -1,0 +1,101 @@
+{
+  "project_name": "HBOT CLINIC - Hiperbarik Oksijen Tedavisi ve Kronik Yara Bütüncül Hasta Yönetim Sistemi",
+  "archetype": "ORGANIC_MEDICAL_PRECISION",
+  "theme": "Light theme default with high contrast medical mode support",
+  "languages": ["tr", "en"],
+  "typography": {
+    "heading_font": "Plus Jakarta Sans, sans-serif",
+    "body_font": "IBM Plex Sans, sans-serif",
+    "mono_font": "JetBrains Mono, monospace",
+    "scale": {
+      "h1": "text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight",
+      "h2": "text-2xl sm:text-3xl font-bold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "h4": "text-lg font-semibold",
+      "body": "text-sm sm:text-base leading-relaxed",
+      "caption": "text-xs font-medium text-slate-500 uppercase tracking-wider",
+      "kiosk_title": "text-3xl sm:text-4xl font-extrabold text-slate-900",
+      "kiosk_button": "text-xl font-bold"
+    }
+  },
+  "colors": {
+    "background": {
+      "primary": "#FFFFFF",
+      "secondary": "#F8FAFC",
+      "tertiary": "#F1F5F9",
+      "card": "#FFFFFF",
+      "sidebar": "#0F172A",
+      "kiosk": "#F8FAFC"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#475569",
+      "muted": "#64748B",
+      "inverse": "#FFFFFF",
+      "teal_accent": "#0D9488",
+      "blue_accent": "#0284C7"
+    },
+    "accents": {
+      "primary_teal": "#0D9488",
+      "primary_teal_hover": "#0F766E",
+      "primary_teal_light": "#CCFBF1",
+      "medical_blue": "#0284C7",
+      "medical_blue_hover": "#0369A1",
+      "medical_blue_light": "#E0F2FE",
+      "critical_red": "#DC2626",
+      "critical_red_light": "#FEE2E2",
+      "warning_amber": "#D97706",
+      "warning_amber_light": "#FEF3C7",
+      "success_emerald": "#059669",
+      "success_emerald_light": "#D1FAE5"
+    },
+    "borders": {
+      "subtle": "#E2E8F0",
+      "medium": "#CBD5E1",
+      "active": "#0D9488",
+      "focus": "0 0 0 2px #0D9488"
+    }
+  },
+  "layout_strategies": {
+    "clinical_dashboard": {
+      "mode": "MODE B - High Density Grid",
+      "grid": "grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 lg:gap-6",
+      "kpi_cards": "col-span-12 sm:col-span-6 lg:col-span-3 border border-slate-200 bg-white rounded-xl p-5 shadow-sm hover:border-teal-500 transition-all cursor-pointer",
+      "data_density": "High density, zero wasted space, fast scanning for doctors and nurses"
+    },
+    "patient_kiosk_wizard": {
+      "mode": "Step-by-Step High Touch Kiosk",
+      "container": "max-w-4xl mx-auto min-h-[85vh] flex flex-col justify-between p-6 sm:p-10 bg-white rounded-2xl border border-slate-200 shadow-xl",
+      "touch_targets": "min-h-[64px] text-lg sm:text-xl rounded-xl px-8 py-4 font-bold tracking-wide flex items-center justify-center gap-3",
+      "step_indicator": "Big visual progress bar with numbered steps and clear status labels"
+    }
+  },
+  "visual_enhancers": {
+    "card_style": "bg-white border border-slate-200/80 rounded-xl shadow-xs hover:shadow-md transition-shadow duration-200",
+    "glass_header": "backdrop-blur-md bg-white/90 border-b border-slate-200 sticky top-0 z-40",
+    "status_badges": "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold",
+    "safety_banner": "p-4 rounded-xl border-l-4 bg-red-50 border-red-600 text-red-900 flex items-start gap-3 shadow-xs font-medium"
+  },
+  "image_urls": {
+    "hyperbaric_chamber": "https://images.unsplash.com/photo-1765830403209-a5eceac4c198?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwxfHxoeXBlcmJhcmljJTIwb3h5Z2VuJTIwY2hhbWJlciUyMG1lZGljYWx8ZW58MHx8fHwxNzkwODQ0ODQxfDA&ixlib=rb-4.1.0&q=85",
+    "doctor_consultation": "https://images.unsplash.com/photo-1758691461990-03b49d969495?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBtZWRpY2FsJTIwY29uc3VsdGF0aW9uJTIwY2xpbmljfGVufDB8fHx8MTc5MDg0NDg0MXww&ixlib=rb-4.1.0&q=85",
+    "female_doctor_portrait": "https://images.unsplash.com/photo-1673865641073-4479f93a7776?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwzfHxkb2N0b3IlMjBtZWRpY2FsJTIwY29uc3VsdGF0aW9uJTIwY2xpbmljfGVufDB8fHx8MTc5MDg0NDg0MXww&ixlib=rb-4.1.0&q=85",
+    "male_doctor_portrait": "https://images.unsplash.com/photo-1645066928295-2506defde470?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHw0fHxkb2N0b3IlMjBtZWRpY2FsJTIwY29uc3VsdGF0aW9uJTIwY2xpbmljfGVufDB8fHx8MTc5MDg0NDg0MXww&ixlib=rb-4.1.0&q=85",
+    "laboratory_sample": "https://images.unsplash.com/photo-1639772823849-6efbd173043c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwZG9jdG9yJTIwbGFib3JhdG9yeSUyMGhlYWx0aGNhcmV8ZW58MHx8fHwxNzkwODQ0ODQxfDA&ixlib=rb-4.1.0&q=85",
+    "laboratory_microscope": "https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwyfHxtZWRpY2FsJTIwZG9jdG9yJTIwbGFib3JhdG9yeSUyMGhlYWx0aGNhcmV8ZW58MHx8fHwxNzkwODQ0ODQxfDA&ixlib=rb-4.1.0&q=85",
+    "laboratory_facility": "https://images.unsplash.com/photo-1579154204601-01588f351e67?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwzfHxtZWRpY2FsJTIwZG9jdG9yJTIwbGFib3JhdG9yeSUyMGhlYWx0aGNhcmV8ZW58MHx8fHwxNzkwODQ0ODQxfDA&ixlib=rb-4.1.0&q=85"
+  },
+  "testing_and_accessibility": {
+    "data_testid_rule": "ALL interactive components, KPI cards, form inputs, navigation items, tabs, and action buttons MUST include data-testid (e.g. data-testid=\"kpi-card-appointments\", data-testid=\"anamnesis-next-btn\").",
+    "contrast_standard": "APCA & WCAG AA compliant. Red critical text must always sit on background with >= 4.5:1 ratio.",
+    "kiosk_accessibility": "Minimum font size 18px for body and 24px for option buttons in kiosk mode. High hit target radius."
+  },
+  "instructions_to_main_agent": [
+    "Ensure Turkish / English language toggle is readily accessible in top header bar across all roles.",
+    "Support role switching (Super Admin, Clinic Admin, Doctor, Nurse, Secretary, Patient) seamlessly via standard avatar menu or role switcher bar.",
+    "Patient Anamnesis Kiosk mode must feel uncluttered, large, bold, step-indexed with clear Save & Continue actions.",
+    "Clinical dashboard for doctors must pack critical information (HBOT session live status, wound healing trajectory chart, risk alerts, missing consents) without feeling overwhelming.",
+    "Integrate TIME model (Tissue, Infection/Inflammation, Moisture, Edge) and Diabetic Foot Assessment module into the Wound Tracking workspace.",
+    "Always apply data-testid attributes on form elements and action buttons."
+  ]
+}

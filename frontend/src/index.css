@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #F8FAFC;
+  color: #0F172A;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 174 84% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 190 95% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 174 84% 32%;
+    --chart-1: 174 84% 32%;
+    --chart-2: 190 95% 39%;
+    --chart-3: 25 95% 53%;
+    --chart-4: 142 71% 45%;
+    --chart-5: 346 77% 50%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+}
+
+::selection { background: #0D9488; color: #fff; }
+
+.kiosk-option {
+  transition: all 0.15s ease;
+}
+.kiosk-option:hover { border-color: #0D9488; background: #CCFBF1; }
+
+.sidebar-link {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.timeline-line::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #E2E8F0;
+}
+
+.signature-pad { touch-action: none; }
+
+@layer base {
+    [data-debug-wrapper="true"] { display: contents !important; }
+}
