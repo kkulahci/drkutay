@@ -31,6 +31,13 @@ SUPER_ADMIN (all clinics), CLINIC_ADMIN, DOCTOR (medical writes), NURSE (clinica
 ## Verified
 Backend 31/31 pytest pass. Frontend: login all roles, dashboard, patient tabs, wound TIME+chart, kiosk wizard (anonymous, mobile) submit.
 
+## Implemented — Iteration 2 (2026-10-01)
+- **Appointment calendar**: create appointments from patient profile (Randevular tab) + daily calendar view with prev/next/today navigation on Appointments page.
+- **Patient Portal**: staff issue portal login ("Portal Erişimi"); PATIENT-role users log in to `/portal` (own forms + appointments only); server-side RBAC blocks staff endpoints (403); submit anamnesis from portal.
+- **File upload (real)**: Emergent object storage behind `StorageAdapter`. Wound photos (photo compare + thumbnails) and documents (gallery with thumbnails/download); files appear in timeline. 15MB limit, JPG/PNG/WEBP/PDF/GIF.
+- **AI summaries (GPT 6 Luna)**: `/api/ai/{capability}` — anamnesis summary, SOAP draft, timeline/wound/encounter summaries, missing-data check. Context built server-side, clinic-scoped. Every output is a clinician-verified DRAFT with disclaimer; "Onayla & Not Olarak Kaydet" saves as encounter note. DOCTOR/CLINIC_ADMIN/SUPER_ADMIN only.
+- Tested: 49/49 backend (31 regression + 18 new), full frontend flows green.
+
 ## TODO / Backlog (explicitly deferred)
 - P0: Real file/object storage adapter (uploads currently metadata-only; wound photos accept URL).
 - P1: Activate AI service layer (GPT 6 Luna) for summaries/SOAP drafts — must stay clinician-verified.
